@@ -15,15 +15,21 @@
 const VALID_URL = 'https://pokeapi.co/api/v2/pokemon/?limit=5';
 const INVALID_URL = 'https://pokeapi.co/api/v2/pokemons/?limit=5';
 
-async function fetchJSON(url) {
-  // TODO
-
-  // Fetch the JSON data from the web API that responds to the `url` parameter
-  // and return a promise that resolves to a corresponding JavaScript object.
-  // Make sure to check for HTTP errors.
+async function fetchJSON (url) {
+  try {
+    const response = await fetch(url);
+    if (response.ok) {
+      const jsonResponse = await response.json();
+      return jsonResponse;
+    } else {
+      throw new Error(`HTTP error! Status: ${response.status} `);
+    }
+  } catch (error) {
+    throw error;
+  }
 }
 
-function renderResults(pokemons) {
+function renderResults (pokemons) {
   // 1. Clear the text content of the HTML element with id `error`.
   const errorElement = document.querySelector('#error');
   errorElement.innerText = '';
@@ -35,7 +41,7 @@ function renderResults(pokemons) {
   pokemonsElement.innerText = JSON.stringify(pokemons, null, 2);
 }
 
-function renderError(err) {
+function renderError (err) {
   // 1. Clear the text content of the HTML element with id `json`.
   const pokemonsElement = document.querySelector('#json');
   pokemonsElement.innerText = '';
@@ -46,16 +52,18 @@ function renderError(err) {
   errorElement.innerText = err;
 }
 
-function main() {
+async function main () {
   const button = document.querySelector('#button');
-  button.addEventListener('click', () => {
+  button.addEventListener('click', async () => {
     const option = document.querySelector('#option');
     const url = option.checked ? INVALID_URL : VALID_URL;
-
-    // TODO
-    // Use `fetchJSON()` to fetch data from the selected url.
-    // If successful, render the data by calling function `renderResults()`.
-    // On failure, render the error by calling function `renderError()`.
+    try {
+      const response = await fetchJSON(url);
+      renderResults(response);
+    } catch (error) {
+      renderError(error);
+      
+    }
   });
 }
 
