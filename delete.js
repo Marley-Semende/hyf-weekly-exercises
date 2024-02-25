@@ -18,8 +18,9 @@ con.connect(async function(err) {
   console.log("Connected to database successfully!");
 
   try {
-    const result = await query("SELECT name AS recipe_name, category AS recipe_category FROM african_recipes WHERE category = 'Main Course'");
-    console.log("Selected data:", result);
+    const deleteQuery = "DELETE FROM african_recipes WHERE category = 'Side Dish'";
+    const result = await query(deleteQuery);
+    console.log("Deleted rows:", result.affectedRows);
   } catch (error) {
     console.error("Error executing query:", error.message);
   } finally {
